@@ -1,10 +1,17 @@
-import { auth } from "./firebase";
+import { Link, Route, Routes } from "react-router-dom";
+import Home from "./pages/Home.jsx";
+import NotFound from "./pages/NotFound.jsx";
+import "./App.css";
 
 function App() {
   return (
-    <div>
-      <h1>React + Firebase OK</h1>
-      <p>Auth instance: {auth ? "READY" : "NOPE"}</p>
+    <div className="app-shell">
+      <main className="page">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </main>
     </div>
   );
 }

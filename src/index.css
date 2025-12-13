@@ -1,0 +1,28 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+:root {
+  --color-bg: #e9efd9;
+  --color-light: #93a38d;
+  --color-mid: #677464;
+  --color-dark: #262e29;
+  --color-white: #ffffff;
+  --color-black: #000000;
+  color: var(--color-dark);
+  background-color: var(--color-bg);
+  font-family: "Roboto", "Segoe UI", system-ui, -apple-system, sans-serif;
+  line-height: 1.5;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+}
+
+a {
+  color: inherit;
+}

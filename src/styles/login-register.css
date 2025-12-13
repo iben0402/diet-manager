@@ -14,7 +14,7 @@ input {
 
 .input-group {
     width: 500px;
-    margin: 0 auto 18px;
+    margin: 20px auto 18px;
 }
 
 .input-wrapper {
@@ -93,6 +93,7 @@ input {
 }
 
 .login-button {
+    width: 500px !important;
     display: block;
     margin: 32px auto 0;
 }

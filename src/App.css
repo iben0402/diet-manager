@@ -32,9 +32,11 @@
 }
 
 .login-header {
-  font-size: 50px;
+  font-size: 70px;
   margin-top: 0;
   color: black;
+  width: 500px;
+  margin: 0 auto;
 }
 
 .default-button {

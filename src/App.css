@@ -4,12 +4,25 @@
   color: var(--color-dark);
 }
 
-.page {
-  max-width: 900px;
-  margin: 0 auto;
-  padding: 20px 16px 40px;
-}
-
 .page-content {
   font-size: 1rem;
+  display:flex;
+  justify-content: space-between;
+  min-height: 100vh;
+}
+
+.page-content .left-panel {
+  padding: 32px;
+}
+
+.page-content .left-panel .title {
+  font-size: 70px;
+  font-family: "Plaster", system-ui;
+  font-weight: 400;
+  font-style: normal;
+}
+
+.page-content .right-panel {
+  background-color: var(--color-mid);
+  width: 600px;
 }

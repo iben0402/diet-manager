@@ -1,0 +1,99 @@
+.sidebar-wrapper {
+  position: relative;
+  margin: 0;
+}
+
+.sidebar {
+  width: 260px;
+  min-height: 100vh;
+  height: 100vh;
+  background-color: #aebfa7;
+  padding: 24px 20px 32px;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  margin: 0;
+}
+
+.sidebar__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.sidebar__brand {
+  font-family: "Plaster", system-ui;
+  font-size: 35px;
+  margin: 0 0 24px;
+}
+
+.sidebar__section {
+  margin-bottom: 32px;
+}
+
+.sidebar__section-title {
+  font-family: "Roboto", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  margin-bottom: 16px;
+}
+
+.sidebar__list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.sidebar__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-family: "Roboto", system-ui, -apple-system, sans-serif;
+  font-size: 16px;
+  color: var(--color-dark);
+}
+
+.sidebar__link {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.sidebar__item .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.sidebar__toggle {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.sidebar__expand-btn {
+  position: sticky;
+  top: 0;
+  left: 0;
+  background: none;
+  border: none;
+  border-radius: 12px;
+  padding: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: none;
+}
+
+.sidebar__expand-btn .material-symbols-outlined {
+  font-size: 24px;
+}

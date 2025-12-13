@@ -12,6 +12,12 @@ input {
     margin-bottom: 8px;
 }
 
+.auth-form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
 .input-group {
     width: 500px;
     margin: 20px auto 18px;
@@ -79,6 +85,32 @@ input {
     letter-spacing: 0.08em;
 }
 
+.auth-message {
+    width: 500px;
+    margin: 8px auto 0;
+    font-size: 14px;
+}
+
+.auth-message.success {
+    color: #1b5e20;
+}
+
+.auth-message.error {
+    color: #b91c1c;
+}
+
+.google-login-btn {
+    border: none;
+    background: transparent;
+    padding: 0;
+    cursor: pointer;
+}
+
+.google-login-btn:disabled {
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
 .google-login {
     display: block;
     width: 220px;
@@ -96,4 +128,9 @@ input {
     width: 500px !important;
     display: block;
     margin: 32px auto 0;
+}
+
+.login-button:disabled {
+    opacity: 0.7;
+    cursor: not-allowed;
 }

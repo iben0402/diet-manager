@@ -4,6 +4,16 @@
   color: var(--color-dark);
 }
 
+.layout-with-sidebar {
+  display: flex;
+  min-height: 100vh;
+}
+
+.layout-content {
+  flex: 1;
+  padding: 24px;
+}
+
 .page-content-login-register {
   font-size: 1rem;
   display:flex;

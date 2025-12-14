@@ -8,6 +8,7 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
+  margin-bottom: 16px;
 }
 
 .goals-header {
@@ -35,16 +36,14 @@
 
 .goal-fields-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 260px;
 }
 
 .goal-field {
   display: flex;
   flex-direction: column;
-  flex: 1 1 150px;
-  min-width: 140px;
-  max-width: 190px;
   font-family: "Roboto", system-ui, -apple-system, sans-serif;
   font-size: 14px;
   color: var(--color-dark);
@@ -60,11 +59,28 @@
   border-radius: 10px;
   padding: 10px 12px;
   font-size: 14px;
+  width: 100px;
 }
 
 .goals-error {
   color: #b91c1c;
   font-size: 14px;
+}
+
+.goal-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.cancel-goal-btn {
+  border: 1px solid rgba(0, 0, 0, 0.2) !important;
+  background: transparent !important;
+  padding: 10px 14px !important;
+  font-size: 14px !important;
+  color: black !important;
+  width: 150px !important;
 }
 
 .goals-table-wrapper {
@@ -107,4 +123,14 @@
   vertical-align: middle;
   margin-right: 8px;
   color: var(--color-mid);
+}
+
+.goal-current {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 12px;
+  background: #d1fadf;
+  color: #166534;
+  font-weight: 600;
+  font-size: 13px;
 }

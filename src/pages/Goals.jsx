@@ -2,10 +2,11 @@ import { useEffect, useState } from "react";
 import {
   addDoc,
   collection,
+  doc,
   onSnapshot,
-  orderBy,
   query,
   serverTimestamp,
+  updateDoc,
   where,
 } from "firebase/firestore";
 import { onAuthStateChanged } from "firebase/auth";
@@ -13,12 +14,11 @@ import { auth, db } from "../firebase";
 import "../styles/goals.css";
 
 const initialGoal = {
-  from: "",
-  to: "",
   calories: "",
   proteins: "",
   fats: "",
   carbs: "",
+  to: "None",
 };
 
 function Goals() {
@@ -28,6 +28,14 @@ function Goals() {
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
   const [showForm, setShowForm] = useState(false);
+
+  const today = () => new Date().toISOString().slice(0, 10);
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setNewGoal(initialGoal);
+    setError(null);
+  };
 
   useEffect(() => {
     const unsubAuth = onAuthStateChanged(auth, (fbUser) => {
@@ -43,18 +51,22 @@ function Goals() {
     }
 
     const goalsRef = collection(db, "goals");
-    const q = query(
-      goalsRef,
-      where("uid", "==", user.uid),
-      orderBy("createdAt", "desc")
-    );
+    const q = query(goalsRef, where("uid", "==", user.uid));
 
     const unsub = onSnapshot(q, (snapshot) => {
-      const data = snapshot.docs.map((doc) => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+      const data = snapshot.docs
+        .map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }))
+        .sort((a, b) => {
+          const aTs = a.createdAt?.seconds || 0;
+          const bTs = b.createdAt?.seconds || 0;
+          return bTs - aTs;
+        });
       setGoals(data);
+    }, (err) => {
+      setError(err.message || "Failed to load goals.");
     });
 
     return unsub;
@@ -64,6 +76,7 @@ function Goals() {
     event.preventDefault();
     if (!showForm) {
       setShowForm(true);
+      setError(null);
       return;
     }
     if (!user) {
@@ -71,14 +84,64 @@ function Goals() {
       return;
     }
 
+    const proteinsNum = Number(newGoal.proteins);
+    const carbsNum = Number(newGoal.carbs);
+    const fatsNum = Number(newGoal.fats);
+    const caloriesNum = Number(newGoal.calories);
+
+    if (
+      !Number.isFinite(proteinsNum) ||
+      !Number.isFinite(carbsNum) ||
+      !Number.isFinite(fatsNum) ||
+      !Number.isFinite(caloriesNum)
+    ) {
+      setError("All fields must be numbers.");
+      return;
+    }
+
+    const macroCalories = proteinsNum * 4 + carbsNum * 4 + fatsNum * 9;
+    const macroRounded = Math.round(macroCalories);
+    const caloriesRounded = Math.round(caloriesNum);
+    const tolerance = 5;
+    const gap = caloriesRounded - macroRounded;
+
+    if (Math.abs(gap) > tolerance) {
+      const adjustWord = gap > 0 ? "Add" : "Remove";
+      const gCarbProt = Math.ceil(Math.abs(gap) / 4);
+      const gFat = Math.ceil(Math.abs(gap) / 9);
+      setError(
+        `Calories mismatch by ${gap > 0 ? "+" : ""}${gap} kcal. ${adjustWord} about ${gCarbProt}g carbs/proteins or ${gFat}g fats (±${tolerance} kcal allowed).`
+      );
+      return;
+    }
+
     setSaving(true);
     setError(null);
     try {
-      await addDoc(collection(db, "goals"), {
-        ...newGoal,
+      // close out the latest goal range by setting its "to" date to today
+      const latestGoalId = [...goals]
+        .sort((a, b) => (b.createdAt?.seconds || 0) - (a.createdAt?.seconds || 0))[0]?.id;
+      if (latestGoalId) {
+        await updateDoc(doc(db, "goals", latestGoalId), { to: today(), uid: user.uid });
+      }
+
+      const payload = {
+        calories: caloriesNum,
+        proteins: proteinsNum,
+        fats: fatsNum,
+        carbs: carbsNum,
+        from: today(),
+        to: newGoal.to || "None",
         uid: user.uid,
         createdAt: serverTimestamp(),
-      });
+      };
+      const docRef = await addDoc(collection(db, "goals"), payload);
+
+      // Optimistically show the new goal while waiting for snapshot
+      setGoals((prev) => [
+        { id: docRef.id, ...payload },
+        ...prev.filter((g) => g.id !== docRef.id),
+      ]);
       setNewGoal(initialGoal);
     } catch (err) {
       setError(err.message || "Failed to save goal.");
@@ -94,40 +157,24 @@ function Goals() {
           <h1>
             Your Goals, <span className="light-weight">keep it up</span>
           </h1>
-          <button className="default-button add-goal-btn" type="submit" disabled={saving}>
-            {saving ? "Saving..." : "+ Add new"}
+          <button
+            className="default-button add-goal-btn"
+            type="button"
+            onClick={() => setShowForm(true)}
+            disabled={saving}
+          >
+            + Add new
           </button>
         </div>
+        {error && !showForm && <div className="goals-error">{error}</div>}
 
         {showForm && (
           <>
             <div className="goal-fields-row">
               <label className="goal-field">
-                <span>From</span>
-                <input
-                  type="text"
-                  value={newGoal.from}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, from: e.target.value })
-                  }
-                  required
-                />
-              </label>
-              <label className="goal-field">
-                <span>To</span>
-                <input
-                  type="text"
-                  value={newGoal.to}
-                  onChange={(e) =>
-                    setNewGoal({ ...newGoal, to: e.target.value })
-                  }
-                  required
-                />
-              </label>
-              <label className="goal-field">
                 <span>Calories</span>
                 <input
-                  type="text"
+                  type="number"
                   value={newGoal.calories}
                   onChange={(e) =>
                     setNewGoal({ ...newGoal, calories: e.target.value })
@@ -138,7 +185,7 @@ function Goals() {
               <label className="goal-field">
                 <span>Proteins</span>
                 <input
-                  type="text"
+                  type="number"
                   value={newGoal.proteins}
                   onChange={(e) =>
                     setNewGoal({ ...newGoal, proteins: e.target.value })
@@ -149,7 +196,7 @@ function Goals() {
               <label className="goal-field">
                 <span>Fats</span>
                 <input
-                  type="text"
+                  type="number"
                   value={newGoal.fats}
                   onChange={(e) =>
                     setNewGoal({ ...newGoal, fats: e.target.value })
@@ -160,7 +207,7 @@ function Goals() {
               <label className="goal-field">
                 <span>Carbs</span>
                 <input
-                  type="text"
+                  type="number"
                   value={newGoal.carbs}
                   onChange={(e) =>
                     setNewGoal({ ...newGoal, carbs: e.target.value })
@@ -170,6 +217,23 @@ function Goals() {
               </label>
             </div>
             {error && <div className="goals-error">{error}</div>}
+            <div className="goal-actions">
+              <button
+                className="default-button add-goal-btn save-goal-btn"
+                type="submit"
+                disabled={saving}
+              >
+                {saving ? "Saving..." : "Save goal"}
+              </button>
+              <button
+                type="button"
+                className="cancel-goal-btn default-button"
+                onClick={handleCancel}
+                disabled={saving}
+              >
+                Cancel
+              </button>
+            </div>
           </>
         )}
       </form>
@@ -180,7 +244,7 @@ function Goals() {
             <tr>
               <th>
                 <span className="material-symbols-outlined header-icon">
-                  calendar_today
+                  today
                 </span>
                 From
               </th>
@@ -197,18 +261,18 @@ function Goals() {
                 Calories
               </th>
               <th>
-                <span className="material-symbols-outlined header-icon">egg</span>
+                <span className="material-symbols-outlined header-icon">egg_alt</span>
                 Proteins
               </th>
               <th>
                 <span className="material-symbols-outlined header-icon">
-                  oil_barrel
+                  water_drop
                 </span>
                 Fats
               </th>
               <th>
                 <span className="material-symbols-outlined header-icon">
-                  grain
+                  graph_5
                 </span>
                 Carbs
               </th>
@@ -225,7 +289,13 @@ function Goals() {
               goals.map((goal) => (
                 <tr key={goal.id}>
                   <td>{goal.from}</td>
-                  <td>{goal.to}</td>
+                  <td>
+                    {goal.to === "None" ? (
+                      <span className="goal-current">Current</span>
+                    ) : (
+                      goal.to
+                    )}
+                  </td>
                   <td>{goal.calories}</td>
                   <td>{goal.proteins}</td>
                   <td>{goal.fats}</td>

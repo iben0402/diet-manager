@@ -1,0 +1,110 @@
+@import url("https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap");
+
+.goals-page {
+  padding: 12px 0;
+}
+
+.goals-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.goals-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.goals-header h1 {
+  margin: 0;
+  font-size: 26px;
+  font-family: "Roboto", system-ui, -apple-system, sans-serif;
+}
+
+.goals-header .light-weight {
+  font-weight: 300;
+}
+
+.add-goal-btn {
+  font-size: 16px !important;
+  cursor: pointer;
+  width: 150px !important;
+}
+
+.goal-fields-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.goal-field {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 150px;
+  min-width: 140px;
+  max-width: 190px;
+  font-family: "Roboto", system-ui, -apple-system, sans-serif;
+  font-size: 14px;
+  color: var(--color-dark);
+}
+
+.goal-field span {
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+
+.goal-field input {
+  border: 1px solid rgba(0, 0, 0, 0.16);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 14px;
+}
+
+.goals-error {
+  color: #b91c1c;
+  font-size: 14px;
+}
+
+.goals-table-wrapper {
+  background: var(--color-white);
+  border-radius: 14px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.goals-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-family: "Roboto", system-ui, -apple-system, sans-serif;
+}
+
+.goals-table th,
+.goals-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  text-align: left;
+  font-size: 15px;
+}
+
+.goals-table thead th {
+  font-weight: 600;
+  background: rgba(0, 0, 0, 0.02);
+}
+
+.goals-table tr:last-child td {
+  border-bottom: none;
+}
+
+.empty-row {
+  text-align: center;
+  color: var(--color-mid);
+}
+
+.header-icon {
+  font-size: 18px;
+  vertical-align: middle;
+  margin-right: 8px;
+  color: var(--color-mid);
+}
